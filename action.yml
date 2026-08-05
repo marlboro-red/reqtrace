@@ -34,7 +34,9 @@ runs:
         VERSION: ${{ inputs.version }}
       run: |
         set -euo pipefail
-        repo="${GITHUB_ACTION_REPOSITORY:?action repository not set}"
+        # GITHUB_ACTION_REPOSITORY is empty when the workflow lives in the
+        # action's own repo; there GITHUB_REPOSITORY is the right value.
+        repo="${GITHUB_ACTION_REPOSITORY:-$GITHUB_REPOSITORY}"
         asset="reqtrace-x86_64-unknown-linux-musl.tar.gz"
         if [ "$VERSION" = "latest" ]; then
           url="https://github.com/${repo}/releases/latest/download/${asset}"
