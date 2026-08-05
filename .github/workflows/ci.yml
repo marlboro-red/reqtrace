@@ -35,3 +35,13 @@ jobs:
           name: reqtrace-report
           path: reqtrace-report.json
           if-no-files-found: ignore
+
+  action-smoke:
+    # Exercises the published composite action end to end: downloads the
+    # released musl binary and runs the same self-check with it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: marlboro-red/reqtrace@v1
+        with:
+          inventory: requirements.yaml
