@@ -34,7 +34,7 @@ check in `.reqtrace.toml` (`fail` | `warn` | `off` | `by-rating`).
 ## GitHub Action
 
 ```yaml
-- uses: OWNER/reqtrace@v1
+- uses: marlboro-red/reqtrace@v1
   with:
     inventory: requirements.yaml
     json: reqtrace-report.json
