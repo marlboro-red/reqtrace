@@ -1,0 +1,47 @@
+# Example inventory. In a real setup this lives with (or is extracted from)
+# your PRD/HLD — reqtrace only does the arithmetic.
+#
+# Statuses: extracted | assumed | confirmed | disputed | retired.
+# Only confirmed/assumed (at the current rev) count toward coverage.
+# rating is [value, risk], each H|M|L; the value drives by-rating severity.
+
+- id: req~login-throttling~1
+  statement: "When a user fails login 5 times in 10 minutes, throttle further attempts."
+  status: confirmed
+  rating: [M, H]
+  owner: pm-jane
+
+- id: req~login-throttling~2
+  statement: "When a user fails login 5 times in 10 minutes, throttle further attempts and log the source IP."
+  status: confirmed
+  rating: [M, H]
+  owner: pm-jane
+
+- id: req~lockout-notice~1
+  statement: "When an account is locked, notify the user through their verified channel."
+  status: confirmed
+  rating: [H, M]
+  owner: pm-jane
+
+- id: req~session-timeout~1
+  statement: "While a session is idle for 30 minutes, the system shall invalidate it."
+  status: confirmed
+  rating: [M, L]
+
+- id: req~rate-limit-headers~1
+  statement: "The API shall return RateLimit-* headers on throttled responses."
+  status: confirmed
+  rating: [L, L]
+
+- id: req~mobile-push~1
+  statement: "Locked-out users shall receive a push notification on paired devices."
+  status: confirmed
+  rating: [M, M]
+
+- id: req~audit-log~1
+  statement: "Every throttling decision shall be written to the audit log."
+  status: extracted        # in flight — not yet in the coverage denominator
+
+- id: req~old-captcha~2
+  statement: "Superseded by risk-based challenges."
+  status: retired          # gone — out of the denominator entirely

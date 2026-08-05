@@ -1,0 +1,13 @@
+# Example config. `reqtrace check` discovers this file by walking up from
+# the current directory; paths in [scan] are CWD-relative, the exceptions
+# path is relative to this file.
+
+[scan]
+globs = ["docs/**/*.md", "src/**/*.rs"]
+exceptions = "not-in-scope.yaml"
+
+[severity]              # per check: "fail" | "warn" | "off" | "by-rating"
+uncovered = "by-rating" # by-rating: H → fail; M, L, or unrated → warn
+stale     = "by-rating"
+orphaned  = "fail"
+unparented = "off"

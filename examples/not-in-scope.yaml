@@ -1,0 +1,10 @@
+# Requirements deliberately out of this repo's scope. Every entry needs a
+# non-empty justification (a missing one is a hard error, exit 2).
+# Exceptions match on type~slug, so they survive requirement revs.
+
+- id: req~mobile-push~1
+  justification: "Mobile repo's responsibility — see mobile/design §4."
+
+- id: req~legacy-export~1
+  justification: "Feature removed in Q2; entry kept while PRD cleanup lands."
+
