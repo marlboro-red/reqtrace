@@ -13,6 +13,10 @@ reqtrace validate --inventory requirements.yaml
 Exit codes: `0` clean (warnings allowed), `1` at least one fail-severity
 finding, `2` usage/parse/I-O error.
 
+New here? Start with the [worked example](examples/README.md) — a small
+fictional service authored so every finding type fires exactly once, with
+the expected output and a fix-it walkthrough.
+
 ## Annotations
 
 Line-oriented; works in Markdown, YAML, and code comments:
