@@ -1,0 +1,69 @@
+name: reqtrace check
+description: >-
+  Deterministic requirements-coverage check: verifies design docs and code
+  carry Covers: annotations for every requirement in the inventory.
+branding:
+  icon: check-square
+  color: green
+
+inputs:
+  inventory:
+    description: Path to the inventory YAML (file or directory)
+    required: true
+  doc-paths:
+    description: >-
+      Space-separated files/dirs to scan. Empty means use [scan].globs
+      from the config file.
+    default: ""
+  config:
+    description: Path to .reqtrace.toml (default lets the tool discover it)
+    default: ""
+  json:
+    description: Write the machine-readable JSON report to this path
+    default: ""
+  version:
+    description: reqtrace release tag to download (e.g. v0.1.0), or "latest"
+    default: latest
+
+runs:
+  using: composite
+  steps:
+    - name: Download reqtrace
+      shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+        repo="${GITHUB_ACTION_REPOSITORY:?action repository not set}"
+        asset="reqtrace-x86_64-unknown-linux-musl.tar.gz"
+        if [ "$VERSION" = "latest" ]; then
+          url="https://github.com/${repo}/releases/latest/download/${asset}"
+        else
+          url="https://github.com/${repo}/releases/download/${VERSION}/${asset}"
+        fi
+        curl -fsSL --retry 3 "$url" -o "${RUNNER_TEMP}/reqtrace.tar.gz"
+        tar xzf "${RUNNER_TEMP}/reqtrace.tar.gz" -C "${RUNNER_TEMP}"
+        chmod +x "${RUNNER_TEMP}/reqtrace"
+
+    - name: Run reqtrace check
+      shell: bash
+      env:
+        INVENTORY: ${{ inputs.inventory }}
+        CONFIG: ${{ inputs.config }}
+        JSON_OUT: ${{ inputs.json }}
+        DOC_PATHS: ${{ inputs['doc-paths'] }}
+      run: |
+        set -euo pipefail
+        args=(check --inventory "$INVENTORY")
+        if [ -n "$CONFIG" ]; then
+          args+=(--config "$CONFIG")
+        fi
+        if [ -n "$JSON_OUT" ]; then
+          args+=(--json "$JSON_OUT")
+        fi
+        if [ -n "$DOC_PATHS" ]; then
+          # word-splitting is intentional: space-separated paths
+          # shellcheck disable=SC2206
+          args+=($DOC_PATHS)
+        fi
+        "${RUNNER_TEMP}/reqtrace" "${args[@]}"

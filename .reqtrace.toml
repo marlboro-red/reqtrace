@@ -1,0 +1,12 @@
+# Self-hosting config: reqtrace checks its own implementation against spec.md's
+# requirement IDs (mirrored in requirements.yaml).
+
+[scan]
+globs = ["src/**/*.rs", "tests/**/*.rs"]
+
+[severity]
+# Every spec requirement must be covered by annotated code — no ratings needed,
+# a dropped requirement is a red build outright.
+uncovered = "fail"
+stale = "fail"
+orphaned = "fail"

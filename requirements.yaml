@@ -1,0 +1,81 @@
+# Hand-maintained mirror of the requirement IDs in spec.md (v0.2).
+# Extraction is out of scope for v1, so this file is manual; drift shows up
+# as orphaned/uncovered findings when CI runs `reqtrace check` on this repo.
+
+- id: cli~exit-codes~1
+  statement: "Exit 0 = no fail findings; 1 = ≥1 fail finding; 2 = usage/parse/IO error."
+  status: confirmed
+- id: cli~error-lanes~1
+  statement: "Tool-input errors (inventory/exceptions/config) exit 2; scanned-doc problems are findings."
+  status: confirmed
+- id: cli~docpaths~1
+  statement: "doc-paths replace [scan].globs entirely; neither present is a usage error."
+  status: confirmed
+- id: cli~config-discovery~1
+  statement: "Without --config, search CWD then ancestors for .reqtrace.toml, else built-in defaults."
+  status: confirmed
+- id: cli~determinism~2
+  statement: "Byte-identical JSON: findings sorted by check, ID, file, line; CWD-relative /-separated paths."
+  status: confirmed
+- id: cli~no-network~1
+  statement: "The tool makes no network calls."
+  status: confirmed
+
+- id: inv~id-grammar~2
+  statement: "Accept IDs matching type~slug~rev grammar (no leading/trailing/consecutive slug hyphens); reject with file/line."
+  status: confirmed
+- id: inv~status-set~1
+  statement: "Accept statuses extracted|assumed|confirmed|disputed|retired; reject others."
+  status: confirmed
+- id: inv~current-rev~1
+  statement: "Highest rev per type~slug is current; lower revs exist only for stale detection."
+  status: confirmed
+- id: inv~coverage-denominator~2
+  statement: "A slug is in the denominator iff its current rev's status is confirmed or assumed."
+  status: confirmed
+- id: inv~dup-ids~2
+  statement: "Same type~slug and same rev twice is exit 2."
+  status: confirmed
+
+- id: ann~grammar~2
+  statement: "Recognize plain/line-comment and balanced HTML-comment annotation forms; attribute to nearest preceding heading."
+  status: confirmed
+- id: ann~malformed~2
+  statement: "Keyword after optional comment prefix but failing the grammar emits a malformed-annotation finding."
+  status: confirmed
+- id: ann~fences~1
+  statement: "Markdown fenced-block lines are invisible to annotation and heading scanning."
+  status: confirmed
+- id: ann~headings~1
+  statement: "Headings tracked only in Markdown files; annotation grammar wins over heading regex."
+  status: confirmed
+- id: ann~derived~1
+  statement: "Derived targets are grammar-validated only and exempt from orphaned/stale; they satisfy unparented."
+  status: confirmed
+
+- id: exc~justification~1
+  statement: "Exception entries without a non-empty justification are malformed (exit 2)."
+  status: confirmed
+- id: exc~matching~1
+  statement: "Exceptions match on type~slug; the entry's rev is ignored for matching."
+  status: confirmed
+
+- id: chk~matching~1
+  statement: "Coverage and exceptions match by type~slug; link rev only signals staleness."
+  status: confirmed
+- id: chk~uncovered~1
+  statement: "Denominator item with zero covering links and no exception is reported with rating and owner."
+  status: confirmed
+- id: chk~stale~1
+  statement: "A link below current rev is reported with file/section, covered rev, and current rev."
+  status: confirmed
+- id: chk~severity-config~1
+  statement: "Config severity policy replaces defaults per check; every check is configurable."
+  status: confirmed
+
+- id: out~json-stable~1
+  statement: "The JSON schema is versioned; breaking changes bump the version field."
+  status: confirmed
+- id: out~summary~1
+  statement: "Summary fields defined with invariant denominator = covered + exceptions + uncovered findings."
+  status: confirmed

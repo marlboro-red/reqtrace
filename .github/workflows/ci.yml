@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets -- -D warnings
+      - run: cargo test
+
+  self-host:
+    # M3: the spec's requirement IDs are enforced on the implementation.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Validate inventory
+        run: cargo run --quiet -- validate --inventory requirements.yaml
+      - name: Check coverage of spec requirements
+        run: cargo run --quiet -- check --inventory requirements.yaml --json reqtrace-report.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reqtrace-report
+          path: reqtrace-report.json
+          if-no-files-found: ignore
