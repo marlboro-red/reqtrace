@@ -1,4 +1,4 @@
-# `reqtrace` — CLI spec v0.2
+# `reqtrace` — CLI spec v0.3
 
 A deterministic requirements-coverage checker. Reads a requirements inventory and a set of design docs, computes coverage arithmetic, reports findings, exits non-zero on failures. No AI, no network, no state.
 
@@ -68,10 +68,11 @@ Line-oriented grammar, valid in Markdown, YAML, and code comments:
 
 ```
 Covers: req~login-throttling~2, req~lockout-notice~1
+Covers: `req~login-throttling~2`  # backticked — renders as a code span in Markdown
 Derived: dsn~retry-queue~1        # declares a design item with no HLD parent
 ```
 
-- `ann~grammar~2` — The tool shall recognize two line forms (`<ids>` = `<id>(\s*,\s*<id>)*` per the ID grammar):
+- `ann~grammar~3` — The tool shall recognize two line forms (`<ids>` = `<idt>(\s*,\s*<idt>)*`, where `<idt>` is an `<id>` per the ID grammar, optionally wrapped in single backticks — bare tildes trigger GFM strikethrough in rendered Markdown, backticked IDs render as code spans):
   - plain / line-comment: `^\s*(?:[#/*;-]+\s*)?(Covers|Derived):\s*<ids>\s*$` — the prefix class covers `#`, `//`, `///`, `*` (block-comment continuation), `--`, `;`, and Markdown list bullets.
   - HTML comment: `^\s*<!--\s*(Covers|Derived):\s*<ids>\s*-->\s*$` — opener and closer both required.
 
@@ -193,6 +194,9 @@ Deferred past v1: smarter `unparented` heuristics (the v1 check is a naive "sect
 ---
 
 ## Changelog
+
+**v0.3**
+- IDs in annotation lines may be wrapped in single backticks (`ann~grammar~3`): bare `~` pairs trigger GFM strikethrough when docs render on GitHub, so visible `Covers:` lines should backtick their IDs; the HTML-comment form remains the invisible alternative.
 
 **v0.2** — resolved audit findings against v0.1:
 - Fence-aware scanning in Markdown (`ann~fences~1`); headings tracked only in Markdown, annotation grammar wins over heading regex (`ann~headings~1`).

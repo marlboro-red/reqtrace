@@ -102,7 +102,7 @@ fn invalid_status_and_id_are_errors() {
     assert!(err.contains("i.yaml:1"), "error carries the line: {err}");
 }
 
-// Covers: ann~grammar~2, ann~fences~1, ann~headings~1, ann~malformed~2
+// Covers: ann~grammar~3, ann~fences~1, ann~headings~1, ann~malformed~2
 #[test]
 fn scanner_forms_fences_and_attribution() {
     let dir = tempfile::tempdir().unwrap();
@@ -122,6 +122,9 @@ fn scanner_forms_fences_and_attribution() {
         "// Covers: req~d~1",
         "/// Derived: dsn~e~1",
         "- Covers: req~f~1",
+        "Covers: `req~g~1`, req~h~1",
+        "<!-- Covers: `req~i~1` -->",
+        "Covers: `req~unbalanced~1",
         "# Covers: notanid",
     ]
     .join("\n");
@@ -131,16 +134,24 @@ fn scanner_forms_fences_and_attribution() {
     let ids: Vec<String> = out.links.iter().map(|l| l.id.to_string()).collect();
     assert_eq!(
         ids,
-        ["req~a~2", "req~b~1", "req~c~1", "req~d~1", "dsn~e~1", "req~f~1"],
-        "fenced Covers ignored, all comment forms recognized"
+        [
+            "req~a~2", "req~b~1", "req~c~1", "req~d~1", "dsn~e~1", "req~f~1", "req~g~1", "req~h~1",
+            "req~i~1"
+        ],
+        "fenced Covers ignored; comment and backticked forms recognized"
     );
     assert!(out
         .links
         .iter()
         .all(|l| l.loc.section.as_deref() == Some("Design")));
     assert_eq!(out.links[4].kind, LinkKind::Derived);
-    assert_eq!(out.malformed.len(), 1, "`# Covers: notanid` is malformed");
-    assert_eq!(out.malformed[0].loc.line, 16);
+    assert_eq!(
+        out.malformed.len(),
+        2,
+        "unbalanced backtick and bad ID are malformed"
+    );
+    assert_eq!(out.malformed[0].loc.line, 18);
+    assert_eq!(out.malformed[1].loc.line, 19);
     // The fenced pseudo-heading must not have opened a section.
     assert!(out
         .sections

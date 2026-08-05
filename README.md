@@ -22,12 +22,17 @@ the expected output and a fix-it walkthrough.
 Line-oriented; works in Markdown, YAML, and code comments:
 
 ```text
-Covers: req~login-throttling~2, req~lockout-notice~1
-Derived: dsn~retry-queue~1
+Covers: `req~login-throttling~2`, `req~lockout-notice~1`
+Derived: `dsn~retry-queue~1`
 ```
 
 Links attribute to the nearest preceding Markdown heading. Fenced code blocks
 are ignored, so documenting the syntax (as this README just did) is safe.
+
+The backticks are optional but recommended in Markdown: bare `~` pairs
+trigger GFM strikethrough when rendered, backticked IDs display as code
+spans. In code comments the bare form (`Covers: req~x~1`) reads fine. For
+invisible annotations, use `<!-- Covers: ... -->`.
 
 ## Checks
 

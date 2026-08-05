@@ -37,8 +37,8 @@
   statement: "Same type~slug and same rev twice is exit 2."
   status: confirmed
 
-- id: ann~grammar~2
-  statement: "Recognize plain/line-comment and balanced HTML-comment annotation forms; attribute to nearest preceding heading."
+- id: ann~grammar~3
+  statement: "Recognize plain/line-comment and balanced HTML-comment annotation forms, IDs optionally backtick-wrapped; attribute to nearest preceding heading."
   status: confirmed
 - id: ann~malformed~2
   statement: "Keyword after optional comment prefix but failing the grammar emits a malformed-annotation finding."

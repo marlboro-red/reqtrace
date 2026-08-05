@@ -75,3 +75,6 @@ exception, not as covered.)
   the syntax can't create phantom links.
 - **`Derived: dsn~retry-queue~1`** declares a design item with no parent
   requirement — it's grammar-checked but exempt from orphaned/stale.
+- **The docs backtick their IDs** (``Covers: `req~x~1` ``). Optional, but in
+  rendered Markdown bare `~` pairs trigger GFM strikethrough; backticked IDs
+  display as code spans. Code comments use the bare form.

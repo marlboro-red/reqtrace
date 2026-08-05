@@ -53,27 +53,34 @@ pub struct ScanFile {
     pub display: String,
 }
 
+/// An ID term: the bare ID or one wrapped in single backticks, so visible
+/// annotation lines render as code spans in Markdown (tildes would otherwise
+/// trigger GFM strikethrough).
+fn id_term() -> String {
+    format!(r"(?:`{id}`|{id})", id = ID_PATTERN)
+}
+
 // Plain / line-comment form.
-// Covers: ann~grammar~2
+// Covers: ann~grammar~3
 fn plain_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
         Regex::new(&format!(
-            r"^\s*(?:[#/*;-]+\s*)?(Covers|Derived):\s*({id}(?:\s*,\s*{id})*)\s*$",
-            id = ID_PATTERN
+            r"^\s*(?:[#/*;-]+\s*)?(Covers|Derived):\s*({idt}(?:\s*,\s*{idt})*)\s*$",
+            idt = id_term()
         ))
         .unwrap()
     })
 }
 
 // HTML-comment form; opener and closer both required.
-// Covers: ann~grammar~2
+// Covers: ann~grammar~3
 fn html_re() -> &'static Regex {
     static RE: OnceLock<Regex> = OnceLock::new();
     RE.get_or_init(|| {
         Regex::new(&format!(
-            r"^\s*<!--\s*(Covers|Derived):\s*({id}(?:\s*,\s*{id})*)\s*-->\s*$",
-            id = ID_PATTERN
+            r"^\s*<!--\s*(Covers|Derived):\s*({idt}(?:\s*,\s*{idt})*)\s*-->\s*$",
+            idt = id_term()
         ))
         .unwrap()
     })
@@ -155,8 +162,8 @@ fn scan_one(f: &ScanFile, out: &mut ScanOutput) -> Result<()> {
                 LinkKind::Derived
             };
             for raw in caps[2].split(',') {
-                // The grammar guarantees each piece parses.
-                if let Some(id) = ReqId::parse(raw.trim()) {
+                // The grammar guarantees each piece parses once unwrapped.
+                if let Some(id) = ReqId::parse(raw.trim().trim_matches('`')) {
                     out.links.push(Link {
                         kind,
                         id,
